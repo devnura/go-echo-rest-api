@@ -1,15 +1,23 @@
 package main
 
 import (
-	"net/http"
+	"os"
 
-	"github.com/labstack/echo/v4"
+	"github.com/sirupsen/logrus"
 )
 
+func init() {
+	ENV := os.Getenv("ENV")
+
+	logrus.Info("choose environment " + ENV)
+}
+
 func main() {
-	e := echo.New()
-	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!")
-	})
-	e.Logger.Fatal(e.Start(":1323"))
+	var (
+	// APP  = os.Getenv("APP")
+	// ENV  = os.Getenv("ENV")
+	// PORT = os.Getenv("PORT")
+	// NAME = fmt.Sprintf("%s-%s", APP, ENV)
+	)
+
 }
