@@ -1,42 +1,78 @@
 package config
 
 import (
-	"fmt"
-	"os"
+	"strings"
+	"time"
 
-	"github.com/devnura/go-echo-rest-api/entity"
-	"github.com/joho/godotenv"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
+	"github.com/spf13/viper"
 )
 
-// Database Connection is creating a new connection to our database
-func DatabaseConnection() *gorm.DB {
-	errEnv := godotenv.Load()
-	if errEnv != nil {
-		panic("Failed to load env file")
-	}
+var (
+	DBConfig  DBConfigProp
+	RDConfig  RedisConfigProp
+	ERRConfig ErrorConfigProp
+)
 
-	dbUser := os.Getenv("DB_USER")
-	dbPass := os.Getenv("DB_PASS")
-	dbHost := os.Getenv("DB_HOST")
-	dbName := os.Getenv("DB_NAME")
+type ErrorConfigProp map[string]string
 
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:3306)/%s?charset=UTF8&parseTime=True&loc=Local", dbUser, dbPass, dbHost, dbName)
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	if err != nil {
-		panic("Failed to create a connection to database")
-	}
-
-	// db.AutoMigrate(&entity.Book{}, &entity.User{})
-	db.AutoMigrate(&entity.User{})
-	return db
+type DBConfigProp struct {
+	Host        string
+	Port        string
+	User        string
+	Pass        string
+	Dbname      string
+	MaxPool     int
+	IdlePool    int
+	MaxLifetime time.Duration
 }
 
-func CloseConnection(db *gorm.DB) {
-	dbSQL, err := db.DB()
-	if err != nil {
-		panic("Failed to close connection database")
+type RedisConfigProp struct {
+	Host  string
+	Port  string
+	Pass  string
+	Index int
+}
+
+func initErrConfig() {
+	ERRConfig = viper.GetStringMapString("errors")
+}
+
+func initDbConfigProp() {
+	DBConfig.Host = viper.GetString("db.host")
+	DBConfig.Port = viper.GetString("db.port")
+	DBConfig.User = viper.GetString("db.user")
+	DBConfig.Pass = viper.GetString("db.pass")
+	DBConfig.Dbname = viper.GetString("db.dbname")
+	DBConfig.MaxPool = viper.GetInt("db.pool.max")
+	DBConfig.IdlePool = viper.GetInt("db.pool.idle")
+	DBConfig.MaxLifetime = viper.GetDuration("db.pool.lifetime")
+}
+
+func initRdConfigProp() {
+	RDConfig.Host = viper.GetString("redis.host")
+	RDConfig.Port = viper.GetString("redis.port")
+	RDConfig.Pass = viper.GetString("redis.pass")
+	RDConfig.Index = viper.GetInt("redis.index")
+}
+
+func initializeViper() {
+
+	viper.AddConfigPath(".")      // file path
+	viper.SetConfigName("config") // file name
+	viper.SetConfigType("yaml")   // file extension
+
+	viper.AutomaticEnv()
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+
+	if err := viper.ReadInConfig(); err != nil {
+		panic(err)
 	}
-	dbSQL.Close()
+
+}
+
+func init() {
+	initializeViper()
+	initDbConfigProp()
+	initRdConfigProp()
+	initErrConfig()
 }
