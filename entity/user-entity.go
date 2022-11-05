@@ -1,11 +1,20 @@
 package entity
 
+import (
+	"time"
+)
+
 // User represents user table in DB
 type User struct {
-	ID       uint64 `gorm:"primary_key:auto_increment" json:"id"`
-	Name     string `gorm:"type:varchar(255)" json:"name"`
-	Email    string `gorm:"uniqueIndex;type:varchar(255)" json:"email"`
-	Password string `gorm:"->;<-;not null" json:"-"`
-	Token    string `gorm:"-" json:"token,omitempty"`
-	// Books    *[]Book `json:"books,omitempty"`
+	ID           uint      `gorm:"primaryKey;" json:"id"`
+	Name         string    `json:"name"`
+	FirstName    string    `json:"first_name"`
+	LastName     string    `json:"last_name"`
+	Phone        string    `json:"phone"`
+	Email        string    `json:"email"`
+	PasswordHash string    `json:"password_hash"`
+	CreatedAt    time.Time `json:"created_at"`
+	CreatedBy    string    `json:"created_by"`
+	ModifiedAt   time.Time `json:"modified_at"`
+	ModifiedBy   string    `json:"modified_by"`
 }
