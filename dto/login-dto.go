@@ -5,14 +5,14 @@ type LoginDTO struct {
 	Password string `json:"password" form:"password" binding:"required" validate:"min:6"`
 }
 
-type RegisterDTO struct {
-	Name     string `json:"name" validate:"required"`
-	Email    string `json:"email" validate:"required"`
-	Password string `json:"password" validate:"required"`
-}
-
 type LoginResponseDTO struct {
 	Name  string `json:"name"`
 	Email string `json:"email"`
 	Token string `json:"token"`
+}
+
+type RegisterDTO struct {
+	Name     string `json:"name" validate:"required"`
+	Email    string `json:"email" validate:"required"`
+	Password string `json:"password" validate:"required"`
 }
