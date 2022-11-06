@@ -1,9 +1,9 @@
 DB:
   host: 0.0.0.0
   port: 3306
-  user: user
-  pass: pass
-  dbname: example
+  user: root
+  pass: 
+  dbname: learn_go_db
 
 redis:
   host: 0.0.0.0

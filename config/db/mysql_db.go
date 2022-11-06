@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/devnura/go-echo-rest-api/config"
+	"github.com/devnura/go-echo-rest-api/entity"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -50,7 +51,7 @@ func NewMysqlDB() *gorm.DB {
 
 	// migrate table
 	db.AutoMigrate(
-	// &repository.User{},
+		&entity.User{},
 	// &repository.Role{}
 	)
 
