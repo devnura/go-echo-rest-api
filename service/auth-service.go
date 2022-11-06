@@ -15,7 +15,7 @@ import (
 )
 
 type AuthService interface {
-	FindByEmail(c echo.Context, req *dto.LoginDTO) (*entity.User, error)
+	VerifyCredential(c echo.Context, req *dto.LoginDTO) (*entity.User, error)
 }
 
 type authService struct {
@@ -28,7 +28,7 @@ func NewAuthService(u repository.AuthRepository) *authService {
 	}
 }
 
-func (s *authService) FindByEmail(c echo.Context, req *dto.LoginDTO) (*entity.User, error) {
+func (s *authService) VerifyCredential(c echo.Context, req *dto.LoginDTO) (*entity.User, error) {
 
 	fmt.Println(req)
 	var entity entity.User

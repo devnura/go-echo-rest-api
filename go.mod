@@ -7,6 +7,8 @@ require (
 	github.com/spf13/viper v1.13.0
 )
 
+require github.com/mashingan/smapping v0.1.19 // indirect
+
 require (
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect

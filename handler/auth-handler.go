@@ -24,6 +24,7 @@ func NewAuthHandler(s service.AuthService) *AuthHandler {
 func (h *AuthHandler) Login(c echo.Context) error {
 	_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	var req dto.LoginDTO
+	// var resData dto.LoginResponseDTO
 	defer cancel()
 
 	validate := validator.New()
@@ -40,7 +41,7 @@ func (h *AuthHandler) Login(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, response)
 	}
 
-	res, err := h.service.FindByEmail(c, &req)
+	res, err := h.service.VerifyCredential(c, &req)
 	if err != nil {
 		fmt.Print(err)
 		response := helper.BuildErrorResponse("Bad Request", err.Error(), helper.EmptyObj{})
@@ -48,5 +49,6 @@ func (h *AuthHandler) Login(c echo.Context) error {
 	}
 
 	response := helper.BuildResponse(true, "Success", res)
+
 	return c.JSON(http.StatusOK, response)
 }

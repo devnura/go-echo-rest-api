@@ -16,10 +16,11 @@ type EmptyObj struct {
 
 //function Build Response
 func BuildResponse(status bool, message string, data interface{}) Response {
+	var err []string
 	res := Response{
 		Status:  status,
 		Message: message,
-		Error:   nil,
+		Error:   err,
 		Data:    data,
 	}
 	return res
