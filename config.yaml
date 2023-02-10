@@ -1,0 +1,20 @@
+DB:
+  host: 0.0.0.0
+  port: 3306
+  user: root
+  pass: 
+  dbname: learn_go_db
+
+redis:
+  host: 0.0.0.0
+  port: 7000
+  pass: password123
+  index: 0
+
+errors:
+  ERR001: Record not found
+  ERR002: Record not found
+  ERR003: Record not found
+  ERR004: Record not found
+  ERR005: Record not found
+  ERR999: Internal server error

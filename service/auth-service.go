@@ -1,46 +1,51 @@
 package service
 
 import (
-	"log"
+	"errors"
+	"fmt"
 
+	"github.com/devnura/go-echo-rest-api/common/log"
 	"github.com/devnura/go-echo-rest-api/dto"
 	"github.com/devnura/go-echo-rest-api/entity"
 	"github.com/devnura/go-echo-rest-api/repository"
-	"golang.org/x/crypto/bcrypt"
+	"github.com/devnura/go-echo-rest-api/transfer"
+	"github.com/jinzhu/copier"
+	"github.com/labstack/echo/v4"
+	"gorm.io/gorm"
 )
 
 type AuthService interface {
-	Login(loginDTO *dto.LoginDTO) interface{}
+	VerifyCredential(c echo.Context, req *dto.LoginDTO) (*entity.User, error)
 }
 
 type authService struct {
 	authRepository repository.AuthRepository
 }
 
-func NewAuthService(authRepo repository.AuthRepository) AuthService {
+func NewAuthService(u repository.AuthRepository) *authService {
 	return &authService{
-		authRepository: authRepo,
+		authRepository: u,
 	}
 }
 
-func (service *authService) Login(dto *dto.LoginDTO) interface{} {
-	res := service.authRepository.FindByUsername(dto.Email)
-	if v, ok := res.(entity.User); ok {
-		comparedPassword := comparePassword(v.PasswordHash, []byte(dto.Password))
-		if v.Email == dto.Email && comparedPassword {
-			return res
-		}
-		return false
-	}
-	return false
-}
+func (s *authService) VerifyCredential(c echo.Context, req *dto.LoginDTO) (*entity.User, error) {
 
-func comparePassword(hasherPassword string, password []byte) bool {
-	byteHash := []byte(hasherPassword)
-	err := bcrypt.CompareHashAndPassword(byteHash, password)
+	fmt.Println(req)
+	var entity entity.User
+	err := copier.Copy(&entity, req)
 	if err != nil {
-		log.Println(err)
-		return false
+		log.InfoWithID(c, "step 1.1")
+		return nil, err
 	}
-	return true
+
+	user, err := s.authRepository.FindByUsername(&entity)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, transfer.NewCustomError("Invalid email or password")
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }
